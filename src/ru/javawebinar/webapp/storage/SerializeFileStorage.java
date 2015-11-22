@@ -2,9 +2,7 @@ package ru.javawebinar.webapp.storage;
 
 import ru.javawebinar.webapp.model.Resume;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * GKislin
@@ -18,12 +16,22 @@ public class SerializeFileStorage extends AbstractFileStorage {
     }
 
     @Override
-    protected void write(Resume r, OutputStream os) throws IOException {
+    protected void write(Resume r, OutputStream os)  throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(os)) {
+            oos.writeObject(r);
+        }
 
     }
 
     @Override
     protected Resume read(InputStream is) throws IOException {
-        return null;
+        Resume r = null;
+        try (ObjectInputStream ois = new ObjectInputStream(is)) {
+            r = (Resume) ois.readObject();
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return r;
     }
 }

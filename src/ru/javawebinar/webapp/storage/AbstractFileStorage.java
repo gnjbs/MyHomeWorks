@@ -12,7 +12,7 @@ import java.util.List;
  * GKislin
  * 23.10.2015.
  */
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
+public abstract class AbstractFileStorage extends AbstractStorage<File>  implements Serializable{
     protected final File directory;
 
     public AbstractFileStorage(String path) {
