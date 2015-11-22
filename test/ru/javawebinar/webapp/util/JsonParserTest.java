@@ -25,7 +25,7 @@ public class JsonParserTest {
 
     @Test
     public void testReadAndWrite() throws Exception {
-//        readAndWrite("resume1.json", R1);
+//      readAndWrite("resume1.json", R1);
         readAndWrite("resume2.json", R2);
         readAndWrite("resume3.json", R3);
     }
