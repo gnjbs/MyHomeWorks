@@ -1,10 +1,10 @@
 package ru.javawebinar.webapp.storage;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import ru.javawebinar.webapp.model.Resume;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * GKislin
@@ -19,12 +19,22 @@ public class JsonFileStorage extends AbstractFileStorage {
 
     @Override
     protected void write(Resume r, OutputStream os) throws IOException {
+        try (DataOutputStream dos = new DataOutputStream(os)) {
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create();
+            String json = gson.toJson(r);
+            dos.writeUTF(json);
+        }
 
     }
 
     @Override
     protected Resume read(InputStream is) throws IOException {
-        return null;
+        try (DataInputStream dis = new DataInputStream(is)) {
+            Resume r = new Gson().fromJson(dis.readUTF(), Resume.class);
+            return r;
+        }
     }
 
     @Override
