@@ -24,7 +24,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File>  impleme
 
     protected abstract void write(Resume r, OutputStream os) throws IOException;
 
-    protected abstract Resume read(InputStream is) throws IOException;
+    protected abstract Resume read(InputStream is) throws IOException,ClassNotFoundException;
 
     @Override
     protected File getContext(String uuid) {
@@ -73,6 +73,9 @@ public abstract class AbstractFileStorage extends AbstractStorage<File>  impleme
             return read(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new WebAppException(ExceptionType.IO_ERROR, file.getName(), e);
+        }
+        catch (ClassNotFoundException e) {
+            throw new WebAppException(ExceptionType.CLASS_NOT_FOUND, file.getName(), e);
         }
     }
 

@@ -3,6 +3,7 @@ package ru.javawebinar.webapp.exceptions;
 public enum ExceptionType {
     XML_ERROR("Xml error"),
     IO_ERROR("Input/Output error"),
+    CLASS_NOT_FOUND("Class not found exception"),
     NOT_FOUND("Resume not found in storage"),
     ALREADY_EXISTS ("Resume is already exist in storage"),
     MAX_VOLUME_EXCEEDED ("Max storage volume is exceeded");

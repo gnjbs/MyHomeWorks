@@ -33,6 +33,7 @@ public class JsonFileStorage extends AbstractFileStorage {
     protected Resume read(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
             Resume r = new Gson().fromJson(dis.readUTF(), Resume.class);
+            System.out.println(r);
             return r;
         }
     }

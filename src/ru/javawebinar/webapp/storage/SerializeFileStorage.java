@@ -24,14 +24,10 @@ public class SerializeFileStorage extends AbstractFileStorage {
     }
 
     @Override
-    protected Resume read(InputStream is) throws IOException {
-        Resume r = null;
+    protected Resume read(InputStream is) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(is)) {
-            r = (Resume) ois.readObject();
+            return (Resume) ois.readObject();
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
-        return r;
     }
 }
