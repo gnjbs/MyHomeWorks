@@ -38,6 +38,10 @@ public class JsonFileStorage extends AbstractFileStorage {
         }
     }
 
+
+
+
+
     @Override
     public boolean isSectionSupported() {
         return false;
