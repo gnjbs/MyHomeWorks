@@ -8,6 +8,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * GKislin
@@ -25,36 +26,45 @@ public class DataStreamFileStorage extends AbstractFileStorage {
             dos.writeUTF(r.getUuid());
             dos.writeUTF(r.getFullName());
 
-            writeCollection(dos, r.getContacts().entrySet(), entry -> {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue());
+            writeCollection(dos, r.getContacts().entrySet(), new ElementWriter<Map.Entry<ContactType, String>>() {
+                @Override
+                public void write(Map.Entry<ContactType, String> entry) throws IOException {
+                    dos.writeUTF(entry.getKey().name());
+                    dos.writeUTF(entry.getValue());
+                }
             });
 
-            writeCollection(dos, r.getSections().entrySet(), entry -> {
-                SectionType type = entry.getKey();
-                Section section = entry.getValue();
-                dos.writeUTF(type.name());
-                switch (type) {
-                    case OBJECTIVE:
-                        dos.writeUTF(((TextSection) section).getContent());
-                        break;
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS:
-                        writeCollection(dos, ((MultiTextSection) section).getLines(), dos::writeUTF);
-                        break;
-                    case EXPERIENCE:
-                    case EDUCATION:
-                        writeCollection(dos, ((OrganizationSection) section).getOrganizations(), org -> {
-                            dos.writeUTF(org.getHomePage().getName());
-                            dos.writeUTF(org.getHomePage().getUrl());
-                            writeCollection(dos, org.getPositions(), position -> {
-                                writeLocalDate(dos, position.getStartDate());
-                                writeLocalDate(dos, position.getEndDate());
-                                dos.writeUTF(position.getTitle());
-                                dos.writeUTF(position.getDescription());
+            writeCollection(dos, r.getSections().entrySet(), new ElementWriter<Map.Entry<SectionType, Section>>() {
+                @Override
+                public void write(Map.Entry<SectionType, Section> entry) throws IOException {
+                    SectionType type = entry.getKey();
+                    Section section = entry.getValue();
+                    dos.writeUTF(type.name());
+                    switch (type) {
+                        case OBJECTIVE:
+                            dos.writeUTF(((TextSection) section).getContent());
+                            break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS:
+                            DataStreamFileStorage.this.writeCollection(dos, ((MultiTextSection) section).getLines(), dos::writeUTF);
+                            break;
+                        case EXPERIENCE:
+                        case EDUCATION:
+                            DataStreamFileStorage.this.writeCollection(dos, ((OrganizationSection) section).getOrganizations(), new ElementWriter<Organization>() {
+                                @Override
+                                public void write(Organization org) throws IOException {
+                                    dos.writeUTF(org.getHomePage().getName());
+                                    dos.writeUTF(org.getHomePage().getUrl());
+                                    DataStreamFileStorage.this.writeCollection(dos, org.getPositions(), position -> {
+                                        writeLocalDate(dos, position.getStartDate());
+                                        writeLocalDate(dos, position.getEndDate());
+                                        dos.writeUTF(position.getTitle());
+                                        dos.writeUTF(position.getDescription());
+                                    });
+                                }
                             });
-                        });
-                        break;
+                            break;
+                    }
                 }
             });
         }
